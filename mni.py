@@ -143,7 +143,7 @@ class IterativeMethods:
 					psum += (-a[i][j]*x0[j])
 				x[i] = (1-w)*x0[i] + (w/a[i][i])*(b[i]+psum)
 			if IterativeMethods.check_error_condition(x,x0,error_quota):
-				break;
+				break
 			k += 1
 			x0 = x[:]
 		return x, k
