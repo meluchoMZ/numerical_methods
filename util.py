@@ -53,3 +53,10 @@ class Util:
 			for j in range(len(m[i])):
 				file.write(str(m[i][j]) + " ")
 			file.write("\n")
+
+	@staticmethod
+	def write_vector_to_file(file, m, message):
+		file.write(message+"\n")
+		for i in range(len(m)):
+			file.write(str(m[i]) + " ")
+		file.write("\n")

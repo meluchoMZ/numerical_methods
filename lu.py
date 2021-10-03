@@ -83,15 +83,27 @@ def lu(a):
 					u[r][c] /= l[r][r]
 	return l, u
 
-def solve_l_system(_lu, x):
-# to do
-	return 0
+def solve_l_system(_lu, b):
+	y = [b[0]]
+	for k in range(1, len(b)):
+		psum = 0
+		for kk in range(k):
+			psum += _lu[k][kk] * y[kk]
+		y.append(b[k] - psum)
+	return y
 
 def solve_u_system(_lu, y):
-# to do
-	return 0
+	l = len(y)-1
+	x = [y[l]/_lu[l][l]]
+	for k in range(l-1, -1, -1):
+		psum = 0
+		for kk in range(l, k, -1):
+			psum += _lu[k][kk] * x[l-kk]
+		x.append((y[k]-psum)/_lu[k][k])
+	x.reverse()
+	return x
 
-def solve_lu(_lu, x):
-	y = solve_l_system(_lu,x)
-	b = solve_u_system(_lu,y)
-	return b
+def solve_lu(_lu, b):
+	y = solve_l_system(_lu,b)
+	x = solve_u_system(_lu,y)
+	return x
