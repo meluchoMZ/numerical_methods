@@ -232,5 +232,5 @@ class Eigenvalues:
 				break
 			q = q1
 			k = k + 1
-		return beta, q1, k
+		return 1/beta, q1, k
 

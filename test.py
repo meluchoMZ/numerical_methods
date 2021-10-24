@@ -18,16 +18,17 @@ if __name__ == "__main__":
 			a = morse.Morse(coef, col, diag)
 			x = [1,2,3,4,5]
 			print(">>> Gradient methods test: ")
-			b = mni.GradientMethods.const_step(a,x,[1,1,1,1,1], 0.0001, 0.00005, 10000)
+			b = mni.GradientMethods.const_step(a,x,[1,1,1,1,1], 0.0001, 0.00005, 10000000)
 			print("------ CONSTANT STEP: ", b)
-			b = mni.GradientMethods.optimal_step(a,x,[1,1,1,1,1], 0.0001, 1000)
+			b = mni.GradientMethods.optimal_step(a,x,[1,1,1,1,1], 0.0001, 1000000)
 			print("------ OPTIMAL STEP: ", b)
 			b = mni.GradientMethods.conjugated(a,x,[1,1,1,1,1], 0.0001, 10)
 			print("------ CONJUGATE: ", b)
 
 #a = morse.Morse([4,-1,3,1,-2,3],[0,0,1,0,1,2],[0,2,5])
-			a = morse.Morse([4,-5,13,-1,2],[0,0,1,0,2],[0,2,4])
-			b = [1,1,1]
+#a = morse.Morse([4,-5,13,-1,2],[0,0,1,0,2],[0,2,4])
+#b = [1,1,1]
+			b = [1,1,1,1,1]
 			print(">>> Eigenvalues calculation: ")
 			x, eing, k = mni.Eigenvalues.inverse_power(a,b,0.0001, 100)
 			print(str(x)+", "+str(eing) + " in "  + str(k) + " iterations")
