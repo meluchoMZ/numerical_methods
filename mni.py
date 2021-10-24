@@ -1,7 +1,10 @@
+# coding=utf-8
 # Numerical methods for computer engineering
 # Author: Miguel Blanco Godón, Computer Engineering, 2021
 
 import math
+import util
+import morse
 
 class Factorizations:
 	# Factorizations
@@ -147,3 +150,87 @@ class IterativeMethods:
 			k += 1
 			x0 = x[:]
 		return x, k
+
+
+
+class GradientMethods:
+
+	@staticmethod
+	def const_step(a, b, x0, min_error, alpha, max_iterations):
+		axo = morse.Morse.matrix_vector(a,x0)
+		r = util.Util.substractV(b,axo)
+		p = r
+		mb = abs(min_error*max(b))
+		x = x0
+		k = 0
+		mr = abs(max(r))
+		while (mr >= mb and k < max_iterations):
+			ar = morse.Morse.matrix_vector(a, r)
+			x = util.Util.sumV(x, [alpha*n for n in r])
+			r = util.Util.substractV(r,[alpha*n for n in ar])
+			mr2 = abs(max(r))
+			beta = (mr2*mr2)/(mr*mr)
+			k = k + 1
+			mr = mr2
+		return x,k
+	
+	@staticmethod
+	def optimal_step(a, b, x0, min_error, max_iterations):
+		axo = morse.Morse.matrix_vector(a,x0)
+		r = util.Util.substractV(b, axo)
+		p = r
+		mb = abs(min_error*max(b))
+		x = x0
+		k = 0
+		mr = abs(max(r))
+		while (mr >= mb and k < max_iterations):
+			ar = morse.Morse.matrix_vector(a, r)
+			alpha = util.Util.inner(r, r)/util.Util.inner(r, ar)
+			x = util.Util.sumV(x, [alpha*n for n in r])
+			r = util.Util.substractV(r,[alpha*n for n in ar])
+			mr2 = abs(max(r))
+			beta = (mr2*mr2)/(mr*mr)
+			k = k + 1
+			mr = mr2
+		return x,k
+	
+	@staticmethod
+	def conjugated(a, b, x0, min_error, max_iterations):
+		axo = morse.Morse.matrix_vector(a,x0)
+		r = util.Util.substractV(b, axo)
+		p = r
+		mb = abs(min_error*max([abs(n) for n in b]))
+		x = x0
+		k = 0
+		mr = max([abs(n) for n in r])
+		while (mr >= mb and k < max_iterations):
+			ap = morse.Morse.matrix_vector(a, p)
+			alpha = util.Util.inner(r, r)/util.Util.inner(p, ap)
+			x = util.Util.sumV(x, [alpha*n for n in p])
+			r1 = util.Util.substractV(r,[alpha*n for n in ap])
+			mr2 = max([abs(n) for n in r])
+			beta = util.Util.inner(r1, r1)/util.Util.inner(r, r)
+			p = util.Util.sumV(r1, [beta*n for n in p])
+			mr = mr2
+			r = r1
+			k = k + 1
+		return x,k
+
+class Eigenvalues:
+
+	@staticmethod
+	def inverse_power(m, q, epsilon, max_iterations):
+		k = 0
+		while (k < max_iterations):
+			x, p = GradientMethods.conjugated(m,q,[1 for n in q], epsilon, max_iterations)
+			mx = max(x)
+			mn = min(x)
+			beta = mx if abs(mx) > abs(mn) else mn
+			q1 = [n/beta for n in x]
+			e = max([abs(n) for n in util.Util.substractV(q1, q)])/max([abs(n) for n in q1])
+			if e < epsilon:
+				break
+			q = q1
+			k = k + 1
+		return beta, q1, k
+

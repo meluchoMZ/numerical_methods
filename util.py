@@ -25,6 +25,36 @@ class Util:
 		return o
 
 	@staticmethod
+	def matrix_vector(a,b):
+		o = []
+		for k in range(len(b)):
+			o.append(0)
+			for kk in range(len(a)):
+				o[k] += a[k][kk]*b[kk]
+		return o
+
+	@staticmethod
+	def sumV(a,b):
+		o = []
+		for k in range(len(a)):
+			o.append(a[k]+b[k])
+		return o
+
+	@staticmethod
+	def substractV(a,b):
+		o = []
+		for k in range(len(a)):
+			o.append(a[k]-b[k])
+		return o
+
+	@staticmethod
+	def inner(a,b):
+		inn = 0;
+		for k in range(len(a)):
+			inn += a[k]*b[k]
+		return inn
+
+	@staticmethod
 	def equals(m,n):
 		if len(m) != len(n):
 			return False
