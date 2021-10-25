@@ -191,8 +191,34 @@ def handle():
 
 		elif x == '8':
 			try:
-				file_name1 = int(input("Please enter int: "))
-				file_name2 = float(input("Please enter float: "))
+				file_name1 = input("Please enter the file path containing coefficients vector: ")
+				file_name2 = input("Please enter the file path containing columns indices vector: ")
+				file_name3 = input("Please enter the file path containing diagonal indices vector: ")
+				file_name4 = input("Please enter the file path containing initial vector: ")
+				it = int(input("Please enter max number of iterations: "))
+				error = float(input("Please enter max error: "))
+				file_name5 = input("Please enter the file path to write the output vector: ")
+				f = open(file_name1, 'r')
+				coef = [float(n) for n in f]
+				f.close()
+				f = open(file_name2, 'r')
+				col = [int(n) for n in f]
+				f.close()
+				f = open(file_name3, 'r')
+				diag = [int(n) for n in f]
+				f.close()
+				f = open(file_name4, 'r')
+				init = [float(n) for n in f]
+				f.close()
+				a = morse.Morse(coef, col, diag)
+				t = time.time()
+				x, k = mni.Eigenvalues.inverse_power(a, init, error, it) 
+				t = time.time() - t
+				f = open(file_name5, 'w+')
+				util.Util.write_vector_to_file(f, x, "Solution to system:")
+				f.close()
+				print("System solved in ", k ," iterations. Output saved on file: ", file_name5)
+				print("Elapsed time: ", t, " seconds")
 			except Exception as e:
 				print(colours.Colours.red(str(e)))
 		else:
