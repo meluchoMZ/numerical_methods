@@ -30,8 +30,8 @@ if __name__ == "__main__":
 #b = [1,1,1]
 			b = [1,1,1,1,1]
 			print(">>> Eigenvalues calculation: ")
-			x, eing, k = mni.Eigenvalues.inverse_power(a,b,0.0001, 100)
-			print(str(x)+", "+str(eing) + " in "  + str(k) + " iterations")
+			x, k = mni.Eigenvalues.inverse_power(a,b,0.0001, 100)
+			print(str(x)+" in "  + str(k) + " iterations")
 			"""
 			f = open("./_test1.dat", 'r')
 			coef = [[float(n) for n in line.split()] for line in f][0]
