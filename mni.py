@@ -5,6 +5,9 @@
 import math
 import util
 import morse
+import matplotlib.pyplot as pp
+import thomas
+import numpy as np
 
 class Factorizations:
 	# Factorizations
@@ -233,4 +236,249 @@ class Eigenvalues:
 			q = q1
 			k = k + 1
 		return 1/beta, k
+
+
+class Spline:
+
+	@staticmethod
+	def plotCubicSpline(x, w, cn):
+		h = []
+		n = len(x)-1
+		for i in range(n):
+			h.append(x[i + 1] - x[i])
+		h.append(0)
+		diag = [1.0]
+		infDiag = [0]
+		supDiag = [-2.0]
+		wt = [0]
+		for i in range(1, n):
+			diag.append(2 * (h[i-1] + h[i]))
+			infDiag.append(h[i-1])
+			supDiag.append(h[i])
+			wt.append((6*(w[i+1]-w[i])/h[i]) - (6*(w[i]-w[i-1])/h[i-1]))
+		diag.append(1)
+		infDiag.append(0) 
+		wt.append(cn)
+		c = thomas.thomas02(diag, infDiag, supDiag, wt)
+		t = x[0]
+		i = 0
+		s = []
+		delta = 1/1000
+		T = []
+		while t <= x[-1]:
+			if t > x[i+1]:
+				i+=1
+			s.append((c[i]*(((x[i+1]-t)**3)/(6*h[i])))+(c[i+1]*(((t-x[i])**3)/(6*h[i])))+((w[i]/h[i]-c[i]*h[i]/6)*(x[i+1]-t))+((w[i+1]/h[i]-c[i+1]*h[i]/6))*(t-x[i]))
+			t += delta
+			T.append(t)
+		pp.scatter(x,w, color='black')
+		pp.plot(T, s, 'r-')
+		pp.show()
+
+
+class Bezier:
+	@staticmethod
+	def __deCasteljau(t, px, py):
+		n = len(px)
+		for m in range(1, n):
+			for k in range(0, n - m):
+				px[k] = (1 - t) * px[k] + t * px[k + 1]
+				py[k] = (1 - t) * py[k] + t * py[k + 1]
+		return px[0], py[0]
+
+	@staticmethod
+	def __deCasteljauRecursive(t, i, n, ck):
+		if n == 0:
+			return ck[i]
+		else:
+			return (1-t)*Bezier.deCasteljauRecursive(t, i, n-1, ck) + t*Bezier.deCasteljauRecursive(t, i+1, n-1, ck)
+		
+	@staticmethod
+	def plotBezier(cx, cy):
+		n = len(cx)
+		bx = []
+		by = []
+		t = 0
+		tf = 1 
+		delta = 1/1000
+		while (t < tf):
+			qx = [float(ck) for ck in cx]
+			qy = [float(ck) for ck in cy]
+			points = Bezier.__deCasteljau(t, qx, qy)
+			bx.append(points[0])
+			by.append(points[1])
+			t += delta
+		# plotting
+		for i in range(n):
+			pp.scatter(cx[i], cy[i], color="black") # control points
+		pp.plot(cx, cy, 'b--') # control polygon
+		pp.plot(bx,by, 'r-') # Bezier curve
+		pp.show()
+
+	@staticmethod
+	def __rationalCasteljau(t, px, py, w):
+		n = len(px)
+		for m in range(1, n):
+			for k in range(0, n - m):
+				den = (1-t)*w[k] + t*w[k+1]
+				px[k] = ((w[k]*(1-t))/den)*px[k] + ((w[k+1]*t)/den)*px[k+1]
+				py[k] = ((w[k]*(1-t))/den)*py[k] + ((w[k+1]*t)/den)*py[k+1]
+		return px[0], py[0]
+
+	@staticmethod
+	def plotRationalBezier(cx, cy, w):
+		n = len(cx)
+		bx = []
+		by = []
+		t = 0
+		tf = 1 
+		delta = 1/1000
+		while (t < tf):
+			qx = [float(ck) for ck in cx]
+			qy = [float(ck) for ck in cy]
+			wk = [float(w_k) for w_k in w]
+			points = Bezier.__rationalCasteljau(t, qx, qy, wk)
+			bx.append(points[0])
+			by.append(points[1])
+			t += delta
+		# plotting
+		for i in range(n):
+			pp.scatter(cx[i], cy[i], color="black") # control points
+		pp.plot(cx, cy, 'b--') # control polygon
+		pp.plot(bx,by, 'r-') # Bezier curve
+		pp.show()
+	
+	@staticmethod
+	def __computeBezier(cx, cy):
+		n = len(cx)
+		bx = []
+		by = []
+		t = 0
+		tf = 1 
+		delta = 1/1000
+		while (t < tf):
+			qx = [float(ck) for ck in cx]
+			qy = [float(ck) for ck in cy]
+			points = Bezier.__deCasteljau(t, qx, qy)
+			bx.append(points[0])
+			by.append(points[1])
+			t += delta
+		return bx, by
+	
+	@staticmethod
+	def interpolate(px, py):
+		n = len(px)
+		m = []
+		delta = 1/(n-1)
+		t = [0]
+		for i in range(n-1):
+			t.append(t[-1]+delta)
+
+		for i in range(n):
+			a = []
+			for k in range(n):
+				a.append(math.comb(n-1,k)*((1-t[i])**(n-k-1))*(t[i]**k))
+			m.append(a)
+
+		cx = np.linalg.solve(m, px)
+		cy = np.linalg.solve(m, py)
+		bx, by = Bezier.__computeBezier(cx, cy)
+		# plotting
+		pp.scatter(px, py, marker='+', color='blue')
+		pp.scatter(cx, cy, color='black')
+		pp.plot(cx, cy, '--', color = 'grey')
+		pp.plot(bx, by, 'r-')
+		pp.show()
+
+
+
+class BSpline:
+
+	@staticmethod
+	def __createOpenNodeSet(n, p):
+		o = []
+		k = 0
+		while k <= n:
+			if k <= p:
+				o.append(0)
+			else:
+				if k <= n:
+					o.append(k-p)
+				else:
+					o.append(n+1-p)
+			k += 1 
+		return o
+
+	@staticmethod
+	def __createClosedNodeSet(start, end, n):
+		delta = (end - start) / n
+		o = []
+		i = start
+		while i <= end:
+			o.append(i)
+			i += delta
+		o.append(i)
+		return o
+
+	@staticmethod
+	def createUniformNodeSet(openSet, start, end, n, p):
+		if (openSet):
+			return BSpline.__createOpenNodeSet(n, p)
+		else:
+			return BSpline.__createClosedNodeSet(start, end, n)
+	
+	
+	@staticmethod
+	def __deBoor(u, px, py, t, p):
+		n = len(px)
+		for k in range(0, n):
+			for r in range(1, p):
+				for j in range(p, r, p-1):
+					alpha = (t-u[j+k-p])/(u[j+1+k-r] - u[j+k-p])
+					px[j] = (1 - alpha) * px[j-1] + alpha * px[j]
+					py[j] = (1 - alpha) * py[j-1] + alpha * py[j]
+		return px[0], py[0]
+
+
+	@staticmethod
+	def plotBSplineBases(n, p):
+		u = BSpline.createUniformNodeSet(False, 0, 1, n, 0)
+		delta = 1/1000
+		T = []
+		Nk = []
+		for k in range(len(u)-1):
+			t = u[0]
+			N0k = []
+			T = []
+			while t < u[-1]:
+				if (u[k] <= t and t < u[k+1]):
+					N0k.append(1)
+				else:
+					N0k.append(0)
+				T.append(t)
+				t += delta
+			Nk.append(N0k)
+		for i in range(p):
+			for x in range(len(T)):
+				for k in range(u):
+					Nk[k][x] = ((T[x]-u[k])/(u[k+p]-u[k]))*Nk[k][x] + ((u[k+p+1]-T[x])/(u[k+p+1]-u[k+1]))*Nk[k+1][x]
+
+		for i in range(len(Nk)):
+			pp.plot(T, Nk[i])
+		pp.show()
+
+
+
+	@staticmethod
+	def plotBSpline(cx, cy, u, t):
+		n = len(cx)
+		bx = []
+		by = []
+		t = 0
+		tf = 1
+		delta = 1/1000
+		while (t < tf):
+			qx = [float(ck) for ck in cx]
+			qy = [float(ck) for ck in cy]
+			points = BSpline.__deBoor(u, qx, qy, t, 0)
 

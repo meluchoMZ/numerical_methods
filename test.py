@@ -4,53 +4,54 @@
 # Author: Miguel Blanco Godón, Computer Engineering, 2021
 
 import colours
-import mni
+from mni import Spline
+from mni import Bezier
+from mni import BSpline
 import morse
+import matplotlib.pyplot as pp
 
 if __name__ == "__main__":
 	# testing LU factorization
 	for i in range(1):
 #print(">>> Optimal gradient test:")
 		try:
-			coef = [0.2,0.1,4,1,-1,60,1,1,8,-1,-2,4,700]
-			col = [0,0,1,0,1,2,0,1,3,1,2,3,4]
-			diag = [0,2,5,8,12]
-			a = morse.Morse(coef, col, diag)
-			x = [1,2,3,4,5]
-			print(">>> Gradient methods test: ")
-			b = mni.GradientMethods.const_step(a,x,[1,1,1,1,1], 0.0001, 0.00005, 10000000)
-			print("------ CONSTANT STEP: ", b)
-			b = mni.GradientMethods.optimal_step(a,x,[1,1,1,1,1], 0.0001, 1000000)
-			print("------ OPTIMAL STEP: ", b)
-			b = mni.GradientMethods.conjugated(a,x,[1,1,1,1,1], 0.0001, 10)
-			print("------ CONJUGATE: ", b)
-
-#a = morse.Morse([4,-1,3,1,-2,3],[0,0,1,0,1,2],[0,2,5])
-#a = morse.Morse([4,-5,13,-1,2],[0,0,1,0,2],[0,2,4])
-#b = [1,1,1]
-			b = [1,1,1,1,1]
-			print(">>> Eigenvalues calculation: ")
-			x, k = mni.Eigenvalues.inverse_power(a,b,0.0001, 100)
-			print(str(x)+" in "  + str(k) + " iterations")
+#		a = BSpline.createUniformNodeSet(False, 1, 2, 10)
+	 #		print(a)
+			a = BSpline.createUniformNodeSet(True, 0,0, 20, 5)
+			print(a)
+			BSpline.plotBSplineBases(5,1)
 			"""
-			f = open("./_test1.dat", 'r')
-			coef = [[float(n) for n in line.split()] for line in f][0]
-			f.close()
-			f = open("./_test2.dat", 'r')
-			col = [[int(n) for n in line.split()] for line in f][0]
-			f.close()
-			f = open("./_test3.dat", 'r')
-			diag = [[int(n) for n in line.split()] for line in f][0]
-			f.close()
-			a = morse.Morse(coef, col, diag)
-			a.print_vectorized()
-			print("MATRIX FORM:")
-			a.print_matrix()
-			x = [-1, 2, 3, -4]
-			b = morse.Morse.matrix_vector(a, x)
-			print("A*x = b; b: ")
-			print(b)
-	"""
+			x = [1, 0, 1, 2, 2]
+			y = [0, 1, 2, 2, 0]
+			Bezier.interpolate(x,y)
+			x = [-4,-3,-2,-1,0,1,2,3,4]
+			w = [16,9,4,1,0,1,4,9,16]
+			Bezier.interpolate(x,w)
+			Spline.plotCubicSpline(x, w, 4) 
+			x = [-1, 0, 1, 3, 4]
+			w = [6, 3, 6, 38, 77]
+			Spline.plotCubicSpline(x, w, 4) 
+			Bezier.interpolate(x,w)
+			cx = [0.0, 0.0, 1.0]
+			cy = [1.0, 0.0, 0.0]
+			Bezier.plotBezier(cx, cy)
+			cx = [0.0, 0.0, 1.5, 3.0, 3.0]
+			cy = [0.0, 2.0, 3.0, 2.0, 0.0]
+			Bezier.plotBezier(cx, cy)
+			cx = [0.0, -2.0, -3.0, -2.0, 0.0]
+			cy = [0.0, 0.0, 1.5, 3.0, 3.0]
+			Bezier.plotBezier(cx, cy)
+			cx = [0.0, 1.0, 1.0, 1.0, 2.0]
+			cy = [0.0, 0.0, 1.0, 2.0, 2.0]
+			Bezier.plotBezier(cx, cy)
+			Bezier.plotRationalBezier(cx, cy, [1, 1.8, 1, 1.8, 1])
+			cx = [0.0, 1.0, 2.0, 3.0] 
+			cy = [0.0, 2.0, 2.0, 0.0] 
+			Bezier.plotBezier(cx, cy)
+			cx = [ 3.0, 5.0, 6.0]
+			cy = [ 0.0, 0.0, 2.0]
+			Bezier.plotBezier(cx, cy)
+			"""
 
 		except Exception as e:
 			print(colours.Colours.red(str(e)))
