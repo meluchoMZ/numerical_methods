@@ -19,13 +19,13 @@ if __name__ == "__main__":
 	 #		print(a)
 			cx = [0.0, 1.0, 1.0, 1.0, 2.0]
 			cy = [0.0, 0.0, 1.0, 2.0, 2.0]
-			BSpline.plotBSpline(cx, cy, BSpline.createUniformNodeSet(True, 1,2,20, 3))
+			BSpline.plotBSpline(cx, cy)
 			cx = [0.0, 0.0, 1.5, 3.0, 3.0]
 			cy = [0.0, 2.0, 3.0, 2.0, 0.0]
-			BSpline.plotBSpline(cx,cy, 0)
+			BSpline.plotBSpline(cx,cy)
 			cx = [0.0, 1.0, 1.0, 1.0, 2.0]
 			cy = [0.0, 0.0, 1.0, 2.0, 2.0]
-			BSpline.plotBSpline(cx,cy, BSpline.createUniformNodeSet(False,0,4,200, 3))
+			BSpline.plotBSpline(cx,cy)
 			BSpline.plotBSplineBases(5,0)
 			BSpline.plotBSplineBases(8,1)
 			BSpline.plotBSplineBases(5,2)
