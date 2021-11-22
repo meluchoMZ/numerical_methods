@@ -427,26 +427,14 @@ class BSpline:
 		else:
 			return BSpline.__createClosedNodeSet(start, end, n)
 	
-	
-	@staticmethod
-	def __deBoor(u, px, py, t, p):
-		n = len(px)
-		for k in range(0, n):
-			for r in range(1, p):
-				for j in range(p, r, p-1):
-					alpha = (t-u[j+k-p])/(u[j+1+k-r] - u[j+k-p])
-					px[j] = (1 - alpha) * px[j-1] + alpha * px[j]
-					py[j] = (1 - alpha) * py[j-1] + alpha * py[j]
-		return px[0], py[0]
-
 
 	@staticmethod
 	def plotBSplineBases(n, p):
-		u = BSpline.createUniformNodeSet(False, 0, 1, n, 0)
+		u = BSpline.createUniformNodeSet(True, 0, 1, 3*n, 3)
 		delta = 1/1000
 		T = []
 		Nk = []
-		for k in range(len(u)-1):
+		for k in range(len(u)):
 			t = u[0]
 			N0k = []
 			T = []
@@ -460,25 +448,50 @@ class BSpline:
 			Nk.append(N0k)
 		for i in range(p):
 			for x in range(len(T)):
-				for k in range(u):
-					Nk[k][x] = ((T[x]-u[k])/(u[k+p]-u[k]))*Nk[k][x] + ((u[k+p+1]-T[x])/(u[k+p+1]-u[k+1]))*Nk[k+1][x]
-
+				for k in range(len(u)-p-1):
+					prev = Nk[k][x]
+					Nk[k][x] = 0
+					if u[k+p]-u[k] != 0:
+						Nk[k][x] += ((T[x]-u[k])/(u[k+p]-u[k]))*prev
+					if u[k+p+1]-u[k+1] != 0:
+						Nk[k][x] += ((u[k+p+1]-T[x])/(u[k+p+1]-u[k+1]))*Nk[k+1][x]
 		for i in range(len(Nk)):
 			pp.plot(T, Nk[i])
 		pp.show()
 
 
+	
+	@staticmethod
+	def __deBoor(k, x, t, c, p):
+		d = [c[j + k - p] for j in range(0, p + 1)]
+		for r in range(1, p + 1):
+			for j in range(p, r - 1, -1):
+				alpha = (x - t[j + k - p]) / (t[j + 1 + k - r] - t[j + k - p])
+				d[j] = (1 - alpha) * d[j - 1] + alpha * d[j]
+		return d[p]
+
 
 	@staticmethod
-	def plotBSpline(cx, cy, u, t):
+	def plotBSpline(cx, cy):
 		n = len(cx)
 		bx = []
 		by = []
+		u = BSpline.__createOpenNodeSet(1000, 3)
 		t = 0
-		tf = 1
+		tf = 2 
 		delta = 1/1000
 		while (t < tf):
-			qx = [float(ck) for ck in cx]
-			qy = [float(ck) for ck in cy]
-			points = BSpline.__deBoor(u, qx, qy, t, 0)
+			k = 0
+			for i in range(len(u)):
+				if u[i] <= t and t < u[i+1]:
+					break;
+				else:
+					k += 1
+			bx.append(BSpline.__deBoor(k, t, u, cx, 3))
+			by.append(BSpline.__deBoor(k, t, u, cy, 3))
+			t+=delta
+		pp.scatter(cx, cy, color="black")
+		pp.plot(cx, cy, 'b--')
+		pp.plot(bx, by, 'r-')
+		pp.show()
 

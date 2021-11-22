@@ -7,10 +7,13 @@ import mni
 import util
 import time
 import morse
+from mni import Spline
+from mni import Bezier
+from mni import BSpline
 
 
 def handle():
-	valid_inputs = ['0', '1', '2', '3', '4', '5', '6', '7', '8']
+	valid_inputs = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14']
 	while (True):
 		print("IMPLEMENTED METHODS:")
 		print("    (1): LU factorization")
@@ -21,6 +24,12 @@ def handle():
 		print("    (6): Optimal step gradient method")
 		print("    (7): Conjugated gradient method")
 		print("    (8): Inverse power method")
+		print("    (9): Spline interpolation method")
+		print("    (10): Bezier curve (control points)")
+		print("    (11): Bezier curve (interpolation)")
+		print("    (12): Rational Bezier curve (control points)")
+		print("    (13): B-Spline basis curves of degree p")
+		print("    (14): B-Spline curve (control points)")
 		print("    (0):" + colours.Colours.red(" Quit"))
 		x = input("Please select an operation: ")
 		while (x not in valid_inputs):
@@ -221,6 +230,65 @@ def handle():
 				print("Elapsed time: ", t, " seconds")
 			except Exception as e:
 				print(colours.Colours.red(str(e)))
+		elif x == '9':
+			file_name1 = input("Please enter the file path containing 'X' axis coefficients vector: ")
+			file_name2 = input("Please enter the file path containing 'Y' axis coefficients vector: ")
+			cn = int(input("Please enter the value of Cn: "))
+			f = open(file_name1, 'r')
+			x = [float(n) for n in f]
+			f.close()
+			f = open(file_name2, 'r')
+			y = [float(n) for n in f]
+			f.close()
+			Spline.plotCubicSpline(x,y,cn)
+		elif x == '10':
+			file_name1 = input("Please enter the file path containing 'X' axis coefficients vector of the control points: ")
+			file_name2 = input("Please enter the file path containing 'Y' axis coefficients vector of the control points: ")
+			f = open(file_name1, 'r')
+			x = [float(n) for n in f]
+			f.close()
+			f = open(file_name2, 'r')
+			y = [float(n) for n in f]
+			f.close()
+			Bezier.plotBezier(x,y)
+		elif x == '11':
+			file_name1 = input("Please enter the file path containing 'X' axis coefficients vector of the points to interpolate: ")
+			file_name2 = input("Please enter the file path containing 'Y' axis coefficients vector of the points to interpolate: ")
+			f = open(file_name1, 'r')
+			x = [float(n) for n in f]
+			f.close()
+			f = open(file_name2, 'r')
+			y = [float(n) for n in f]
+			f.close()
+			Bezier.interpolate(x,y)
+		elif x == '12':
+			file_name1 = input("Please enter the file path containing 'X' axis coefficients vector of the points to interpolate: ")
+			file_name2 = input("Please enter the file path containing 'Y' axis coefficients vector of the points to interpolate: ")
+			file_name3 = input("Please enter the file path containing the 'wheight' coefficients vector: ")
+			f = open(file_name1, 'r')
+			x = [float(n) for n in f]
+			f.close()
+			f = open(file_name2, 'r')
+			y = [float(n) for n in f]
+			f.close()
+			f = open(file_name3, 'r')
+			y = [float(n) for n in f]
+			f.close()
+			Bezier.plotRationalBezier(x,y,w)
+		elif x == '13':
+			n = int(input("Please enter the number of points: "))
+			x = int(input("Please enter the desired degree: "))
+			BSpline.plotBSplineBases(n,x)
+		elif x == '14':
+			file_name1 = input("Please enter the file path containing 'X' axis coefficients vector of the control points: ")
+			file_name2 = input("Please enter the file path containing 'Y' axis coefficients vector of the control points: ")
+			f = open(file_name1, 'r')
+			x = [float(n) for n in f]
+			f.close()
+			f = open(file_name2, 'r')
+			y = [float(n) for n in f]
+			f.close()
+			BSpline.plotBSpline(x,y)
 		else:
 		  	print("404 not found")
 

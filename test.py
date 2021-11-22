@@ -17,10 +17,21 @@ if __name__ == "__main__":
 		try:
 #		a = BSpline.createUniformNodeSet(False, 1, 2, 10)
 	 #		print(a)
-			a = BSpline.createUniformNodeSet(True, 0,0, 20, 5)
-			print(a)
-			BSpline.plotBSplineBases(5,1)
-			"""
+			cx = [0.0, 1.0, 1.0, 1.0, 2.0]
+			cy = [0.0, 0.0, 1.0, 2.0, 2.0]
+			BSpline.plotBSpline(cx, cy, BSpline.createUniformNodeSet(True, 1,2,20, 3))
+			cx = [0.0, 0.0, 1.5, 3.0, 3.0]
+			cy = [0.0, 2.0, 3.0, 2.0, 0.0]
+			BSpline.plotBSpline(cx,cy, 0)
+			cx = [0.0, 1.0, 1.0, 1.0, 2.0]
+			cy = [0.0, 0.0, 1.0, 2.0, 2.0]
+			BSpline.plotBSpline(cx,cy, BSpline.createUniformNodeSet(False,0,4,200, 3))
+			BSpline.plotBSplineBases(5,0)
+			BSpline.plotBSplineBases(8,1)
+			BSpline.plotBSplineBases(5,2)
+			BSpline.plotBSplineBases(5,3)
+			BSpline.plotBSplineBases(5,4)
+			BSpline.plotBSplineBases(14, 3)
 			x = [1, 0, 1, 2, 2]
 			y = [0, 1, 2, 2, 0]
 			Bezier.interpolate(x,y)
@@ -51,7 +62,6 @@ if __name__ == "__main__":
 			cx = [ 3.0, 5.0, 6.0]
 			cy = [ 0.0, 0.0, 2.0]
 			Bezier.plotBezier(cx, cy)
-			"""
 
 		except Exception as e:
 			print(colours.Colours.red(str(e)))
